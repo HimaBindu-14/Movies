@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6e7bff, #f25e92);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 3em;
+            margin-top: 60px;
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        #filters {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        #filters select,
+        #filters input {
+            padding: 12px 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+            border: none;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        #filters select:hover,
+        #filters input:hover {
+            transform: scale(1.05);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 10px;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px;
+            width: 250px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .movie-card h3 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.6em;
+            margin-top: 15px;
+            color: #fff;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .movie-card p {
+            font-size: 1em;
+            color: #ddd;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .pagination button,
+        .pagination span {
+            background: #5c6bc0;
+            border: none;
+            color: #fff;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 1.2em;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .pagination button:hover,
+        .pagination span:hover {
+            background: #3f51b5;
+            transform: scale(1.1);
+        }
+
+        .pagination button:disabled {
+            background: #777;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Platform</h1>
+    <div id="filters">
+        <select id="filterGenre">
+            <option value="">Select Genre</option>
+            <option value="Drama">Drama</option>
+            <option value="Action">Action</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Crime">Crime</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Animation">Animation</option>
+            <option value="Biography">Biography</option>
+            <option value="Thriller">Thriller</option>
+            <option value="Musical">Musical</option>
+            <option value="History">History</option>
+            <option value="War">War</option>
+            <option value="Western">Western</option>
+        </select>
+        <input type="text" id="searchBar" placeholder="Search Movies..." />
+    </div>
+
+    <div class="container" id="movieContainer"></div>
+    <div class="pagination" id="pagination"></div>
+
+    <script>
+        const dataset = {
+            "movies": [
+                {"title": "The Shawshank Redemption", "genre": "Drama", "release_date": "1994-09-23", "rating": 9.3, "thumbnail_url": "https://example.com/thumbnail1.jpg", "director": "Frank Darabont", "cast": ["Tim Robbins", "Morgan Freeman", "Bob Gunton"], "duration": 142, "tags": ["inspirational", "prison", "friendship"]},
+                {"title": "The Godfather", "genre": "Crime", "release_date": "1972-03-24", "rating": 9.2, "thumbnail_url": "https://example.com/thumbnail2.jpg", "director": "Francis Ford Coppola", "cast": ["Marlon Brando", "Al Pacino", "James Caan"], "duration": 175, "tags": ["mafia", "classic", "family"]},
+                {"title": "The Dark Knight", "genre": "Action", "release_date": "2008-07-18", "rating": 9.0, "thumbnail_url": "https://example.com/thumbnail3.jpg", "director": "Christopher Nolan", "cast": ["Christian Bale", "Heath Ledger", "Aaron Eckhart"], "duration": 152, "tags": ["superhero", "dc", "thriller"]},
+                {"title": "Pulp Fiction", "genre": "Crime", "release_date": "1994-10-14", "rating": 8.9, "thumbnail_url": "https://example.com/thumbnail4.jpg", "director": "Quentin Tarantino", "cast": ["John Travolta", "Uma Thurman", "Samuel L. Jackson"], "duration": 154, "tags": ["non-linear", "cult", "dialogue"]},
+                {"title": "Forrest Gump", "genre": "Drama", "release_date": "1994-07-06", "rating": 8.8, "thumbnail_url": "https://example.com/thumbnail5.jpg", "director": "Robert Zemeckis", "cast": ["Tom Hanks", "Robin Wright", "Gary Sinise"], "duration": 142, "tags": ["inspirational", "life journey", "friendship"]},
+                {"title": "Inception", "genre": "Sci-Fi", "release_date": "2010-07-16", "rating": 8.8, "thumbnail_url": "https://example.com/thumbnail6.jpg", "director": "Christopher Nolan", "cast": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"], "duration": 148, "tags": ["mind-bending", "thriller", "dream"]},
+                {"title": "Fight Club", "genre": "Drama", "release_date": "1999-10-15", "rating": 8.8, "thumbnail_url": "https://example.com/thumbnail7.jpg", "director": "David Fincher", "cast": ["Brad Pitt", "Edward Norton", "Helena Bonham Carter"], "duration": 139, "tags": ["psychological", "cult", "anti-establishment"]},
+                {"title": "The Matrix", "genre": "Sci-Fi", "release_date": "1999-03-31", "rating": 8.7, "thumbnail_url": "https://example.com/thumbnail8.jpg", "director": "Lana Wachowski, Lilly Wachowski", "cast": ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"], "duration": 136, "tags": ["simulation", "cyberpunk", "revolution"]},
+                {"title": "Goodfellas", "genre": "Crime", "release_date": "1990-09-19", "rating": 8.7, "thumbnail_url": "https://example.com/thumbnail9.jpg", "director": "Martin Scorsese", "cast": ["Robert De Niro", "Ray Liotta", "Joe Pesci"], "duration": 146, "tags": ["mafia", "based on true story", "violence"]},
+                {"title": "The Lord of the Rings: The Return of the King", "genre": "Fantasy", "release_date": "2003-12-17", "rating": 8.9, "thumbnail_url": "https://example.com/thumbnail10.jpg", "director": "Peter Jackson", "cast": ["Elijah Wood", "Viggo Mortensen", "Ian McKellen"], "duration": 201, "tags": ["epic", "adventure", "fantasy"]},
+                {"title": "The Lion King", "genre": "Animation", "release_date": "1994-06-24", "rating": 8.5, "thumbnail_url": "https://example.com/thumbnail100.jpg", "director": "Roger Allers, Rob Minkoff", "cast": ["Matthew Broderick", "Jeremy Irons", "James Earl Jones"], "duration": 88, "tags": ["disney", "family", "animated"]},
+                {"title": "Interstellar", "genre": "Sci-Fi", "release_date": "2014-11-07", "rating": 8.6, "thumbnail_url": "https://example.com/thumbnail11.jpg", "director": "Christopher Nolan", "cast": ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"], "duration": 169, "tags": ["space", "time travel", "epic"]},
+                {"title": "Gladiator", "genre": "Action", "release_date": "2000-05-05", "rating": 8.5, "thumbnail_url": "https://example.com/thumbnail12.jpg", "director": "Ridley Scott", "cast": ["Russell Crowe", "Joaquin Phoenix", "Connie Nielsen"], "duration": 155, "tags": ["ancient rome", "epic", "revenge"]},
+                {"title": "The Prestige", "genre": "Drama", "release_date": "2006-10-20", "rating": 8.5, "thumbnail_url": "https://example.com/thumbnail13.jpg", "director": "Christopher Nolan", "cast": ["Christian Bale", "Hugh Jackman", "Scarlett Johansson"], "duration": 130, "tags": ["magic", "rivalry", "mystery"]},
+                {"title": "The Green Mile", "genre": "Drama", "release_date": "1999-12-10", "rating": 8.6, "thumbnail_url": "https://example.com/thumbnail14.jpg", "director": "Frank Darabont", "cast": ["Tom Hanks", "Michael Clarke Duncan", "David Morse"], "duration": 189, "tags": ["prison", "supernatural", "compassion"]},
+                {"title": "Schindler's List", "genre": "History", "release_date": "1993-12-15", "rating": 9.0, "thumbnail_url": "https://example.com/thumbnail15.jpg", "director": "Steven Spielberg", "cast": ["Liam Neeson", "Ralph Fiennes", "Ben Kingsley"], "duration": 195, "tags": ["holocaust", "war", "based on true story"]},
+                {"title": "The Silence of the Lambs", "genre": "Thriller", "release_date": "1991-02-14", "rating": 8.6, "thumbnail_url": "https://example.com/thumbnail16.jpg", "director": "Jonathan Demme", "cast": ["Jodie Foster", "Anthony Hopkins", "Scott Glenn"], "duration": 118, "tags": ["psychological thriller", "crime", "serial killer"]},
+                {"title": "Saving Private Ryan", "genre": "War", "release_date": "1998-07-24", "rating": 8.6, "thumbnail_url": "https://example.com/thumbnail17.jpg", "director": "Steven Spielberg", "cast": ["Tom Hanks", "Matt Damon", "Tom Sizemore"], "duration": 169, "tags": ["ww2", "soldiers", "heroism"]},
+                {"title": "The Departed", "genre": "Crime", "release_date": "2006-10-06", "rating": 8.5, "thumbnail_url": "https://example.com/thumbnail18.jpg", "director": "Martin Scorsese", "cast": ["Leonardo DiCaprio", "Matt Damon", "Jack Nicholson"], "duration": 151, "tags": ["mafia", "gangster", "crime"]},
+                {"title": "The Social Network", "genre": "Biography", "release_date": "2010-10-01", "rating": 8.0, "thumbnail_url": "https://example.com/thumbnail19.jpg", "director": "David Fincher", "cast": ["Jesse Eisenberg", "Andrew Garfield", "Justin Timberlake"], "duration": 120, "tags": ["facebook", "technology", "social media"]},
+                {"title": "12 Angry Men", "genre": "Drama", "release_date": "1957-04-10", "rating": 8.9, "thumbnail_url": "https://example.com/thumbnail20.jpg", "director": "Sidney Lumet", "cast": ["Henry Fonda", "Lee J. Cobb", "Martin Balsam"], "duration": 96, "tags": ["courtroom", "jury", "justice"]},
+            ]
+        };
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        const filterGenre = document.getElementById('filterGenre');
+        const searchBar = document.getElementById('searchBar');
+        const movieContainer = document.getElementById('movieContainer');
+        const pagination = document.getElementById('pagination');
+        const applyFilters = () => {
+            const genre = filterGenre.value.toLowerCase();
+            const searchText = searchBar.value.toLowerCase();
+
+            const filteredMovies = dataset.movies.filter(movie => {
+                const matchesGenre = genre ? movie.genre.toLowerCase().includes(genre) : true;
+                const matchesSearch = movie.title.toLowerCase().includes(searchText);
+                return matchesGenre && matchesSearch;
+            });
+
+            return filteredMovies;
+        };
+
+        const displayMovies = (movies) => {
+            movieContainer.innerHTML = '';
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const paginatedMovies = movies.slice(startIndex, startIndex + itemsPerPage);
+
+            paginatedMovies.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.classList.add('movie-card');
+                movieCard.innerHTML = `
+                    <img src="${movie.thumbnail_url}" alt="${movie.title}">
+                    <h3>${movie.title}</h3>
+                    <p>Genre: ${movie.genre}</p>
+                    <p>Rating: ${movie.rating}</p>
+                    <p>Duration: ${movie.duration} mins</p>
+                `;
+                movieContainer.appendChild(movieCard);
+            });
+
+            renderPagination(movies.length);
+        };
+
+        const renderPagination = (totalItems) => {
+            pagination.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            const prevButton = document.createElement('button');
+            prevButton.innerText = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateMovieDisplay();
+                }
+            });
+
+            pagination.appendChild(prevButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('span');
+                pageButton.innerText = i;
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    updateMovieDisplay();
+                });
+
+                if (i === currentPage) {
+                    pageButton.style.backgroundColor = '#3f51b5';
+                }
+
+                pagination.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.innerText = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateMovieDisplay();
+                }
+            });
+
+            pagination.appendChild(nextButton);
+        };
+
+        const updateMovieDisplay = () => {
+            const filteredMovies = applyFilters();
+            displayMovies(filteredMovies);
+        };
+
+        filterGenre.addEventListener('change', updateMovieDisplay);
+        searchBar.addEventListener('input', updateMovieDisplay);
+
+        updateMovieDisplay(); 
+    </script>
+</body>
+</html>
